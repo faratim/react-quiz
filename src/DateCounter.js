@@ -1,53 +1,54 @@
 import { useState, useReducer } from "react";
 
+const initialState = {count: 0, step: 1};
+
 function reducer(state, action) {
-  console.log(state, action)
+  console.log(state, action);
   switch (action.type) {
-    case "INC":
-      return state + 1;
-    case "DEC":
-      return state - 1;
-    case "SET":
-      return action.count;
+    case "inc":
+      return { ...state, count: state.count + state.step};
+    case "dec":
+      return { ...state, count: state.count - state.step};
+    case "setCount":
+      return { ...state, count: action.payload};
+    case "setStep":
+      return { ...state, step: action.payload};
+    case "reset":
+      return initialState;
     default:
-      return state;
+      throw new Error('Unknown action');
   }
 }
 
 function DateCounter() {
-  // const [count, setCount] = useState(0);
-  const [count, dispatch] = useReducer(reducer, 0); 
 
-  const [step, setStep] = useState(1);
+  const [state, dispatch] = useReducer(reducer, initialState); 
+  const {count, step} = state;
 
   // This mutates the date object.
   const date = new Date("june 21 2027");
   date.setDate(date.getDate() + count);
 
   const dec = function () {
-    dispatch({ type: "DEC" });
-    // setCount((count) => count - 1);
-    // setCount((count) => count - step);
+    dispatch({ type: "dec" });
   };
 
   const inc = function () {
-    dispatch( {type: "INC"});
-    // setCount((count) => count + 1);
-    // setCount((count) => count + step);
+    dispatch( {type: "inc"});
   };
 
   const defineCount = function (e) {
-    dispatch({type: 'SET', payload: Number(e.target.value)});
-    // setCount(Number(e.target.value));
+    dispatch({type: 'setCount', payload: Number(e.target.value)});
   };
 
   const defineStep = function (e) {
-    setStep(Number(e.target.value));
+    dispatch({type: 'setStep', payload: Number(e.target.value)});
   };
 
   const reset = function () {
+    dispatch({type: 'reset'})
     // setCount(0);
-    setStep(1);
+    // setStep(1);
   };
 
   return (
